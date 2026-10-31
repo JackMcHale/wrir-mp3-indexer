@@ -2,19 +2,38 @@
 
 A local Go scanner that walks a music directory, extracts MP3 tags, and keeps a restartable stream of search-index updates in SQLite. SQLite is used only for the file manifest and durable outbox; search is handled by a downstream consumer.
 
-## Build
+## Build and run
+
+Requires Go 1.26 or newer.
+
+### Windows (PowerShell)
 
 ```powershell
 go build -o mp3index.exe .
-```
-
-## Scan and consume updates
-
-```powershell
 mp3index.exe scan "D:\Music"
 mp3index.exe events
 mp3index.exe ack 1
 ```
+
+### macOS
+
+```sh
+go build -o mp3index .
+./mp3index scan "$HOME/Music"
+./mp3index events
+./mp3index ack 1
+```
+
+### Linux
+
+```sh
+go build -o mp3index .
+./mp3index scan "$HOME/Music"
+./mp3index events
+./mp3index ack 1
+```
+
+Replace the example music directory with the path to your collection.
 
 `scan` emits an `upsert` event when a track's indexed metadata changes and a `delete` event after a complete scan no longer finds a previously indexed file. A scan that encounters directory traversal errors does not reconcile deletions. Unreadable MP3s are reported and skipped.
 
